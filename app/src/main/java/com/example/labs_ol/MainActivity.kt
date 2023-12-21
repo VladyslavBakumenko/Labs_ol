@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var recyclerViewAdapter: RecyclerViewAdapter
     private var totalCost = 0
-    private var selectedPlacesList = mutableListOf<String>()
+    private var selectedProductsList = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,17 +20,21 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         initRecyclerView()
-        binding.startOtherActivity.setOnClickListener {
+        binding.btnList.setOnClickListener {
             startSecondActivity()
         }
     }
 
     private fun initRecyclerView() {
-        recyclerViewAdapter = RecyclerViewAdapter { state, placeName ->
-            if (state) addToList(placeName)
-            else removeFromList(placeName)
-            binding.tvPlaces.text = selectedPlacesList.toString()
-        }
+        recyclerViewAdapter = RecyclerViewAdapter({
+            totalCost += it
+            binding.tvTotalCost.text = "Загальна ціна = $totalCost"
+            addToList(it)
+        }, {
+            totalCost -= it
+            binding.tvTotalCost.text = "Загальна ціна = $totalCost"
+            removeFromList(it)
+        })
 
         with(binding.rvProducts) {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -41,32 +45,38 @@ class MainActivity : AppCompatActivity() {
 
     private fun createList(): List<ProductData> {
         return listOf(
-            ProductData("Dell", 1000, 4, R.drawable.first),
-            ProductData("Samsung", 2000, 4, R.drawable.second),
-            ProductData("Lenovo", 1500, 4, R.drawable.thirth),
+            ProductData("Dell", 1000, 4),
+            ProductData("Samsung", 2000, 4),
+            ProductData("Lenovo", 1500, 4),
+            ProductData("Apple", 4000, 4),
+            ProductData("HP", 800, 4)
         )
     }
 
-    private fun addToList(placeName: String) {
-        selectedPlacesList.add(placeName)
+    private fun removeFromList(cost: Int) {
+        when (cost) {
+            1000 -> selectedProductsList.remove("Dell")
+            2000 -> selectedProductsList.remove("Samsung")
+            1500 -> selectedProductsList.remove("Lenovo")
+            4000 -> selectedProductsList.remove("Apple")
+            800 -> selectedProductsList.remove("HP")
+        }
     }
 
-    private fun removeFromList(placeName: String) {
-        selectedPlacesList.remove(placeName)
+    private fun addToList(cost: Int) {
+        when (cost) {
+            1000 -> selectedProductsList.add("Dell")
+            2000 -> selectedProductsList.add("Samsung")
+            1500 -> selectedProductsList.add("Lenovo")
+            4000 -> selectedProductsList.add("Apple")
+            800 -> selectedProductsList.add("HP")
+        }
     }
 
     private fun startSecondActivity() {
-        if (selectedPlacesList.isNotEmpty()) {
-            val id = when (selectedPlacesList.first()) {
-                "Dell" -> R.drawable.first
-                "Samsung" -> R.drawable.second
-                "Lenovo" -> R.drawable.thirth
-                else -> 4
-            }
-            val intent = Intent(this, SecondActivity::class.java).apply {
-                putExtra("test", id)
-            }
-            startActivity(intent)
+        val intent = Intent(this, SecondActivity::class.java).apply {
+            putExtra("test", selectedProductsList.toString())
         }
+        startActivity(intent)
     }
 }
