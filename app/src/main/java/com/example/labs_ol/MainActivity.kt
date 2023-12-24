@@ -53,19 +53,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView(allTelevisions: List<Television>) {
-        recyclerViewAdapter = RecyclerViewAdapter({
-            val myIntent = Intent(this, AddTVActivity::class.java)
-            EntityArg.getInstance(it)
-            this@MainActivity.startActivity(myIntent)
-        }, {
+        scope.launch(Dispatchers.Main) {
+            recyclerViewAdapter = RecyclerViewAdapter({
+                val myIntent = Intent(this@MainActivity, AddTVActivity::class.java)
+                EntityArg.getInstance(it)
+                this@MainActivity.startActivity(myIntent)
+            }, {
 
-        })
+            })
 
-        with(binding.recyclerView) {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = recyclerViewAdapter
+            with(binding.recyclerView) {
+                layoutManager = LinearLayoutManager(this@MainActivity)
+                adapter = recyclerViewAdapter
+            }
+            recyclerViewAdapter?.submitList(allTelevisions)
+            recyclerViewAdapter?.notifyDataSetChanged()
         }
-        recyclerViewAdapter?.submitList(allTelevisions)
-        recyclerViewAdapter?.notifyDataSetChanged()
     }
 }
