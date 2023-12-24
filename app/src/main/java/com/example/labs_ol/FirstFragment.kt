@@ -33,8 +33,8 @@ class FirstFragment : Fragment() {
                 binding?.textView?.visibility = View.GONE
                 binding?.webView?.apply {
                     visibility = View.VISIBLE
-//                    getSettings().setAllowContentAccess(true);
-//                    getSettings().setAllowFileAccess(true);
+                    settings.javaScriptEnabled = true
+                    webViewClient = WebViewClient()
                     loadUrl("https://www.youtube.com/")
                 }
             }
