@@ -3,6 +3,7 @@ package com.example.labs_ol
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.labs_ol.adapter.RecyclerViewAdapter
 import com.example.labs_ol.databinding.ActivityMainBinding
@@ -29,7 +30,11 @@ class MainActivity : AppCompatActivity() {
         recyclerViewAdapter = RecyclerViewAdapter { state, placeName ->
             if (state) addToList(placeName)
             else removeFromList(placeName)
-            binding.tvPlaces.text = selectedPlacesList.toString()
+            binding.tvPlaces.text = "Вибрані ноутбуки: ${selectedPlacesList}"
+            if  (selectedPlacesList.isEmpty()) binding.tvPlaces.visibility = View.INVISIBLE
+            else {
+                binding.tvPlaces.visibility = View.VISIBLE
+            }
         }
 
         with(binding.rvProducts) {
